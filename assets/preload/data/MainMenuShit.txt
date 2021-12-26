@@ -1,0 +1,6 @@
+{
+    "devs": "ninjamuffin\nphantomarcade\nkawaisprite\nevilsker",
+    "isAssociation": true,
+    "association": "newgrounds"
+    "note": "this is a txt cause yes"
+}
