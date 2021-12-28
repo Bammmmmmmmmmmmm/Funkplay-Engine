@@ -51,7 +51,7 @@ class ChartingState extends MusicBeatState
 	var bpmTxt:FlxText;
 
 	var strumLine:FlxSprite;
-	var curSong:String = 'Dadbattle';
+	var curSong:String = 'Dad-Battle';
 	var amountSteps:Int = 0;
 	var bullshitUI:FlxGroup;
 
@@ -226,7 +226,7 @@ class ChartingState extends MusicBeatState
 
 		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
 
-		var stages:Array<String> = ['stage', 'halloween', 'philly', 'limo', 'mall', 'mallEvil', 'school', 'schoolEvil'];
+		var stages:Array<String> = ['stage', 'halloween', 'philly', 'limo', 'mall', 'mallEvil', 'school', 'schoolEvil', 'tankStage'];
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
@@ -240,7 +240,7 @@ class ChartingState extends MusicBeatState
 		});
 		player2DropDown.selectedLabel = _song.player2;
 
-		var stageDropDown = new FlxUIDropDownMenu(10, 190, FlxUIDropDownMenu.makeStrIdLabelArray(stages, true), function(stagelol:String)
+		var stageDropDown = new FlxUIDropDownMenu(10, 150, FlxUIDropDownMenu.makeStrIdLabelArray(stages, true), function(stagelol:String)
 		{
 			_song.stage = stages[Std.parseInt(stagelol)];
 		});

@@ -1,11 +1,13 @@
 package;
 
+import lime.media.openal.ALDevice;
 #if desktop
 import Discord.DiscordClient;
 #end
 import Section.SwagSection;
 import Song.SwagSong;
 import WiggleEffect.WiggleEffectType;
+import flixel.math.FlxAngle;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
@@ -64,6 +66,13 @@ class PlayState extends MusicBeatState
 	private var notes:FlxTypedGroup<Note>;
 	private var unspawnNotes:Array<Note> = [];
 
+	
+	var rightShootArray:Array<Int> = [2,3,5,9,10,16,22,25,26,34,35,37,41,42,48,54,57,58,66,67,69,73,74,80,86,89,90,98,99,101,105, 106, 112, 118, 121, 122, 253, 260, 268, 280, 284, 292, 300, 312, 316, 317, 318, 320, 332, 336, 344, 358, 360, 362, 364, 372, 376, 388, 396, 404, 408, 412, 420, 428, 436, 440, 444, 452, 456, 460, 468, 472, 476, 484, 488, 492, 508, 509, 510, 516, 520, 524, 532, 540, 552, 556, 564, 568, 572, 580, 584, 588, 596, 604, 612, 616, 620, 636, 637, 638, 642, 643, 645, 649, 650, 656, 662, 665, 666, 674, 675, 677, 681, 682, 688, 694, 697, 698, 706, 707, 709, 713, 714, 720, 726, 729, 730, 738, 739, 741, 745, 746, 753, 758, 761, 762, 768, 788, 792, 796, 800, 820, 824, 828, 829, 830, 832, 852, 856, 860, 861, 862, 864, 865, 866, 884, 885, 886, 887, 892, 900, 912, 916, 924, 926, 936, 948, 958, 962, 966, 970, 974, 976, 980, 984, 988, 990, 1000, 1004, 1006, 1008, 1012, 1019, 1028, 1036, 1044, 1052, 1060, 1068, 1076, 1084, 1092, 1100, 1108, 1116, 1124, 1132, 1148, 1149, 1150, 1156, 1160, 1164, 1172, 1180, 1188, 1192, 1196, 1204, 1208, 1212, 1220, 1224, 1228, 1236, 1244, 1252, 1256, 1260, 1276, 1296, 1300, 1304, 1308, 1320, 1324, 1328, 1332, 1340, 1352, 1358, 1364, 1372, 1374, 1378, 1388, 1392, 1400, 1401, 1405, 1410, 1411, 1413, 1417, 1418, 1424, 1430, 1433, 1434];
+	var leftShootArray:Array<Int> = [0,7,12,14,15,18,19,24,28,32,39,44,46,47,50,51,56,60,61,62,64,71,76,78,79,82,83,88,92,96,103,108,110,111,114,115,120,124,252,254,256,264,272,276,288,296,304,308,324,328,340,348,352,354,356,366,368,378,384,392,394,400,410,416,424,426,432,442,448,458,464,474,480,490,496,500,504,506,512,522,528,536,538,544,554,560,570,576,586,592,600,602,608,618,624,628,632,634,640,647,652,654,655,658,659,664,668,672,679,684,686,687,690,691,696,700,701,702,704,711,716,718,719,722,723,728,732,736,743,748,750,751,754,755,760,764,772,776,780,784,804,808,812,816,836,840,844,848,868,869,870,872,873,874,876,877,878,880,881,882,883,888,889,890,891,896,904,908,920,928,932,940,944,951,952,953,955,960,964,968,972,978,982,986,992,994,996,1016,1017,1021,1024,1034,1040,1050,1056,1066,1072,1082,1088,1098,1104,1114,1120,1130,1136,1140,1144,1146,1152,1162,1168,1176,1178,1184,1194,1200,1210,1216,1226,1232,1240,1242,1248,1258,1264,1268,1272,1280,1284,1288,1292,1312,1314,1316,1336,1344,1356,1360,1368,1376,1380,1384,1396,1404,1408,1415,1420,1422,1423,1426,1427,1432,1436,1437,1438];
+
+	var rightTankArray:Array<Int> = [0, 14, 19, 32, 46, 51, 61, 71, 79, 88, 103, 111, 120, 254, 272, 296, 324, 348, 356, 378, 394, 416, 432, 458, 480, 500, 512, 536, 554, 576, 600, 618, 632, 647, 655, 664, 679, 687, 696, 702, 716, 722, 732, 748, 754, 764, 780, 808, 836, 848, 870, 874, 878, 882, 889, 896, 920, 940, 952, 960, 972, 986, 996, 1021, 1040, 1066, 1088, 1114, 1136, 1146, 1168, 1184];
+	var leftTankArray:Array<Int> = [2, 9, 22, 34, 41, 54, 66, 73, 86, 98, 105, 118, 253, 280, 300, 317, 332, 358, 364, 388, 408, 428, 444, 460, 476, 492, 510, 524, 552, 568, 584, 604, 620, 638, 645, 656, 666, 677, 688, 698, 709, 720, 730, 741, 753, 762, 792, 820, 829, 852, 861, 865, 885, 892, 916, 936, 962, 974, 984, 1000, 1008, 1028, 1052, 1076, 1100, 1124, 1149, 1160, 1180];
+
 	private var strumLine:FlxSprite;
 	private var curSection:Int = 0;
 
@@ -91,6 +100,7 @@ class PlayState extends MusicBeatState
 	private var iconP2:HealthIcon;
 	private var camHUD:FlxCamera;
 	private var camGame:FlxCamera;
+	public var funkPlayVer:String = '0.0.1 (NOT READY FOR USE)';
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 
@@ -133,6 +143,23 @@ class PlayState extends MusicBeatState
 	var detailsText:String = "";
 	var detailsPausedText:String = "";
 	#end
+
+	var missCount:Float = 0;
+
+	var tankWatchtower:FlxSprite;
+	var tankRolling:FlxSprite;
+	var tankmanRun:FlxTypedGroup<TankmenBG>;
+	//tankbop shit
+	var tankBop1:FlxSprite;
+	var tankBop2:FlxSprite;
+	var tankBop3:FlxSprite;
+	var tankBop4:FlxSprite;
+	var tankBop5:FlxSprite;
+	var tankBop6:FlxSprite;
+	//end of tankbop
+
+	var picoStep:Ps;
+	var tankStep:Ts;
 
 	override public function create()
 	{
@@ -486,39 +513,24 @@ class PlayState extends MusicBeatState
 		                  var waveEffectFG = new FlxWaveEffect(FlxWaveMode.ALL, 2, -1, 5, 2);
 
 		                  var posX = 400;
-	                          var posY = 200;
+	                          var posY = 400;
 
-		                  var bg:FlxSprite = new FlxSprite(posX, posY);
-		                  bg.frames = Paths.getSparrowAtlas('weeb/animatedEvilSchool', 'week6');
-		                  bg.animation.addByPrefix('idle', 'background 2', 24);
-		                  bg.animation.play('idle');
-		                  bg.scrollFactor.set(0.8, 0.9);
-		                  bg.scale.set(6, 6);
-		                  add(bg);
-
-		                  /* 
+		                  
 		                           var bg:FlxSprite = new FlxSprite(posX, posY).loadGraphic(Paths.image('weeb/evilSchoolBG'));
 		                           bg.scale.set(6, 6);
-		                           // bg.setGraphicSize(Std.int(bg.width * 6));
-		                           // bg.updateHitbox();
 		                           add(bg);
 
 		                           var fg:FlxSprite = new FlxSprite(posX, posY).loadGraphic(Paths.image('weeb/evilSchoolFG'));
 		                           fg.scale.set(6, 6);
-		                           // fg.setGraphicSize(Std.int(fg.width * 6));
-		                           // fg.updateHitbox();
 		                           add(fg);
 
 		                           wiggleShit.effectType = WiggleEffectType.DREAMY;
 		                           wiggleShit.waveAmplitude = 0.01;
 		                           wiggleShit.waveFrequency = 60;
 		                           wiggleShit.waveSpeed = 0.8;
-		                    */
 
-		                  // bg.shader = wiggleShit.shader;
-		                  // fg.shader = wiggleShit.shader;
-
-		                  /* 
+		                  			bg.shader = wiggleShit.shader;
+		                  			fg.shader = wiggleShit.shader;
 		                            var waveSprite = new FlxEffectSprite(bg, [waveEffectBG]);
 		                            var waveSpriteFG = new FlxEffectSprite(fg, [waveEffectFG]);
 
@@ -538,8 +550,139 @@ class PlayState extends MusicBeatState
 
 		                            add(waveSprite);
 		                            add(waveSpriteFG);
-		                    */
 		          }
+				  case 'tankStage':
+				  {
+					  
+
+					picoStep = Json.parse(openfl.utils.Assets.getText(Paths.json('stress/picospeaker')));
+					tankStep = Json.parse(openfl.utils.Assets.getText(Paths.json('stress/tankSpawn')));
+					curStage = 'tankStage';
+					defaultCamZoom = 0.9;
+					var sky:FlxSprite = new FlxSprite(-400,-400).loadGraphic(Paths.image('tankSky', 'week7'));
+					sky.scrollFactor.set(0, 0);
+					sky.antialiasing = true;
+					sky.setGraphicSize(Std.int(sky.width * 1.5));
+					add(sky);
+	
+					var clouds:FlxSprite = new FlxSprite(FlxG.random.int(-700, -100), FlxG.random.int(-20, 20)).loadGraphic(Paths.image('tankClouds', 'week7'));
+					clouds.scrollFactor.set(0.1, 0.1);
+					clouds.velocity.x = FlxG.random.float(5, 15);
+					clouds.antialiasing = true;
+					clouds.updateHitbox();
+					add(clouds);
+	
+					var mountains:FlxSprite = new FlxSprite(-300,-20).loadGraphic(Paths.image('tankMountains', 'week7'));
+					mountains.scrollFactor.set(0.2, 0.2);
+					mountains.setGraphicSize(Std.int(1.2 * mountains.width));
+					mountains.updateHitbox();
+					mountains.antialiasing = true;
+					add(mountains);
+	
+					var buildings:FlxSprite = new FlxSprite(-200,0).loadGraphic(Paths.image('tankBuildings', 'week7'));
+					buildings.scrollFactor.set(0.3, 0.3);
+					buildings.setGraphicSize(Std.int(buildings.width * 1.1));
+					buildings.updateHitbox();
+					buildings.antialiasing = true;
+					add(buildings);
+	
+					var ruins:FlxSprite = new FlxSprite(-200,0).loadGraphic(Paths.image('tankRuins', 'week7'));
+					ruins.scrollFactor.set(0.35, 0.35);
+					ruins.setGraphicSize(Std.int(ruins.width * 1.1));
+					ruins.updateHitbox();
+					ruins.antialiasing = true;
+					add(ruins);
+	
+	
+					var smokeLeft:FlxSprite = new FlxSprite(-200,-100);
+					smokeLeft.frames = Paths.getSparrowAtlas('smokeLeft', 'week7');
+					smokeLeft.animation.addByPrefix('idle', 'SmokeBlurLeft ', 24, true);
+					smokeLeft.scrollFactor.set(0.4, 0.4);
+					smokeLeft.antialiasing = true;
+					smokeLeft.animation.play('idle');
+					
+					add(smokeLeft);
+	
+					var smokeRight:FlxSprite = new FlxSprite(1100,-100);
+					smokeRight.frames = Paths.getSparrowAtlas('smokeRight', 'week7');
+					smokeRight.animation.addByPrefix('idle', 'SmokeRight ', 24, true);
+					smokeRight.scrollFactor.set(0.4, 0.4);
+					smokeRight.antialiasing = true;
+					smokeRight.animation.play('idle');
+					
+					add(smokeRight);
+	
+	
+					var tankWatchtower:FlxSprite = new FlxSprite(100,120);
+					tankWatchtower.frames = Paths.getSparrowAtlas('tankWatchtower', 'week7');
+					tankWatchtower.animation.addByPrefix('bop', 'watchtower gradient color instance 1', 24, true);
+					tankWatchtower.scrollFactor.set(0.5, 0.5);
+					tankWatchtower.antialiasing = true;
+				
+					add(tankWatchtower);
+					
+					tankRolling = new FlxSprite(300,300);
+					tankRolling.frames = Paths.getSparrowAtlas('tankRolling', 'week7');
+					tankRolling.animation.addByPrefix('idle', 'BG tank w lighting ', 24, true);
+							tankRolling.scrollFactor.set(0.5, 0.5);
+					tankRolling.antialiasing = true;
+					tankRolling.animation.play('idle');
+					add(tankRolling);
+	
+	
+					var ground:FlxSprite = new FlxSprite(-420, -150).loadGraphic(Paths.image('tankGround', 'week7'));
+					ground.scrollFactor.set();
+					ground.antialiasing = true;
+					ground.setGraphicSize(Std.int(ground.width * 1.15));
+					ground.scrollFactor.set(1, 1);
+					
+					ground.updateHitbox();
+					add(ground);
+	
+					tankBop1 = new FlxSprite(-500,650);
+					tankBop1.frames = Paths.getSparrowAtlas('tank0', 'week7');
+					tankBop1.animation.addByPrefix('bop', 'fg tankhead far right instance 1', 24);
+					tankBop1.scrollFactor.set(1.7, 1.5);
+					tankBop1.antialiasing = true;
+	
+					tankBop2 = new FlxSprite(-300,750);
+					tankBop2.frames = Paths.getSparrowAtlas('tank1', 'week7');
+					tankBop2.animation.addByPrefix('bop','fg tankhead 5 instance 1', 24);
+					tankBop2.scrollFactor.set(2.0, 0.2);
+					tankBop2.antialiasing = true;
+	
+					tankBop3 = new FlxSprite(450,940);
+					tankBop3.frames = Paths.getSparrowAtlas('tank2', 'week7');
+					tankBop3.animation.addByPrefix('bop','foreground man 3 instance 1', 24);
+					tankBop3.scrollFactor.set(1.5, 1.5);
+					tankBop3.antialiasing = true;
+	
+					tankBop4 = new FlxSprite(1300,1200);
+					tankBop4.frames = Paths.getSparrowAtlas('tank3', 'week7');
+					tankBop4.animation.addByPrefix('bop','fg tankhead 4 instance 1', 24);
+					tankBop4.scrollFactor.set(3.5, 2.5);
+					tankBop4.antialiasing = true;
+	
+					tankBop5 = new FlxSprite(1300,900);
+					tankBop5.frames = Paths.getSparrowAtlas('tank4', 'week7');
+					tankBop5.animation.addByPrefix('bop','fg tankman bobbin 3 instance 1', 24);
+					tankBop5.scrollFactor.set(1.5, 1.5);
+					tankBop5.antialiasing = true;
+	
+					tankBop6 = new FlxSprite(1620,700);
+					tankBop6.frames = Paths.getSparrowAtlas('tank5', 'week7');
+					tankBop6.animation.addByPrefix('bop','fg tankhead far right instance 1', 24);
+					tankBop6.scrollFactor.set(1.5, 1.5);
+					tankBop6.antialiasing = true;
+	
+					//tankWatchtower.animation.play('bop');
+					tankBop1.animation.play('bop');
+					tankBop2.animation.play('bop');
+					tankBop3.animation.play('bop');
+					tankBop4.animation.play('bop');
+					tankBop5.animation.play('bop');
+					tankBop6.animation.play('bop');
+				  }
 		          default:
 		          {
 		                  defaultCamZoom = 0.9;
@@ -581,6 +724,16 @@ class PlayState extends MusicBeatState
 				gfVersion = 'gf-pixel';
 			case 'schoolEvil':
 				gfVersion = 'gf-pixel';
+			case 'tankStage':
+				if (SONG.player1 == 'bf-holding-gf')
+				{
+					gfVersion = 'picoSpeaker';
+				}
+				else
+				{
+					gfVersion = 'gf-tankman';
+				}
+
 		}
 
 		if (curStage == 'limo')
@@ -629,6 +782,8 @@ class PlayState extends MusicBeatState
 				dad.x -= 150;
 				dad.y += 100;
 				camPos.set(dad.getGraphicMidpoint().x + 300, dad.getGraphicMidpoint().y);
+			case 'tankman':
+				dad.y += 250;
 		}
 
 		boyfriend = new Boyfriend(770, 450, SONG.player1);
@@ -667,6 +822,11 @@ class PlayState extends MusicBeatState
 				boyfriend.y += 220;
 				gf.x += 180;
 				gf.y += 300;
+			case 'tankStage':
+				if (SONG.song.toLowerCase() == 'stress')
+				{
+					gf.y -= 200;
+				}
 		}
 
 		add(gf);
@@ -688,6 +848,9 @@ class PlayState extends MusicBeatState
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(FlxG.width, 10);
 		strumLine.scrollFactor.set();
+
+		if (FlxG.save.data.downscroll)
+			strumLine.y = FlxG.height - 165;
 
 		strumLineNotes = new FlxTypedGroup<FlxSprite>();
 		add(strumLineNotes);
@@ -722,6 +885,10 @@ class PlayState extends MusicBeatState
 		FlxG.fixedTimestep = false;
 
 		healthBarBG = new FlxSprite(0, FlxG.height * 0.9).loadGraphic(Paths.image('healthBar'));
+		if (FlxG.save.data.downscroll)
+		{
+			healthBarBG.y = 50;
+		}
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
 		add(healthBarBG);
@@ -733,10 +900,15 @@ class PlayState extends MusicBeatState
 		// healthBar
 		add(healthBar);
 
-		scoreTxt = new FlxText(healthBarBG.x + healthBarBG.width - 190, healthBarBG.y + 30, 0, "", 20);
-		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
+		scoreTxt = new FlxText(700, healthBarBG.y + 30, 0, "", 20);
+		scoreTxt.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.SHADOW, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		add(scoreTxt);
+
+		var watermarkTxt:FlxText = new FlxText(20, healthBarBG.y + 30, 0, SONG.song + " " + (storyDifficulty == 2 ? "Hard" : storyDifficulty == 1 ? "Normal" : "Easy") + " Funkplay Version " + funkPlayVer, 20);
+		watermarkTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.SHADOW, FlxColor.BLACK);
+		watermarkTxt.scrollFactor.set();
+		add(watermarkTxt);
 
 		iconP1 = new HealthIcon(SONG.player1, true);
 		iconP1.y = healthBar.y - (iconP1.height / 2);
@@ -752,6 +924,7 @@ class PlayState extends MusicBeatState
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
+		watermarkTxt.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
 
@@ -819,6 +992,7 @@ class PlayState extends MusicBeatState
 
 	function schoolIntro(?dialogueBox:DialogueBox):Void
 	{
+		camHUD.visible = false;
 		var black:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
 		black.scrollFactor.set();
 		add(black);
@@ -906,6 +1080,7 @@ class PlayState extends MusicBeatState
 
 	function startCountdown():Void
 	{
+		camHUD.visible = true;
 		inCutscene = false;
 
 		generateStaticArrows(0);
@@ -945,7 +1120,7 @@ class PlayState extends MusicBeatState
 
 			{
 				case 0:
-					FlxG.sound.play(Paths.sound('intro3'), 0.6);
+					FlxG.sound.play(Paths.sound('intro3' + altSuffix), 0.6);
 				case 1:
 					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 					ready.scrollFactor.set();
@@ -963,7 +1138,7 @@ class PlayState extends MusicBeatState
 							ready.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro2'), 0.6);
+					FlxG.sound.play(Paths.sound('intro2' + altSuffix), 0.6);
 				case 2:
 					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 					set.scrollFactor.set();
@@ -980,7 +1155,7 @@ class PlayState extends MusicBeatState
 							set.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro1'), 0.6);
+					FlxG.sound.play(Paths.sound('intro1' + altSuffix), 0.6);
 				case 3:
 					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 					go.scrollFactor.set();
@@ -999,7 +1174,7 @@ class PlayState extends MusicBeatState
 							go.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('introGo'), 0.6);
+					FlxG.sound.play(Paths.sound('introGo' + altSuffix), 0.6);
 				case 4:
 			}
 
@@ -1359,12 +1534,22 @@ class PlayState extends MusicBeatState
 						trainFrameTiming = 0;
 					}
 				}
+			case 'tankStage':
+				moveTank();
 				// phillyCityLights.members[curLight].alpha -= (Conductor.crochet / 1000) * FlxG.elapsed;
 		}
 
 		super.update(elapsed);
 
-		scoreTxt.text = "Score:" + songScore;
+		if (FlxG.save.data.moreInfo)
+		{
+			scoreTxt.text = "Score:" + songScore + " || Misses:" + missCount;
+		}
+		else
+		{
+			scoreTxt.text = "Score:" + songScore;
+		}
+		
 
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
 		{
@@ -1622,7 +1807,13 @@ class PlayState extends MusicBeatState
 					daNote.active = true;
 				}
 
-				daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
+				switch (FlxG.save.data.downscroll)
+				{
+					case true:
+						daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * (-0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
+					case false:
+						daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
+				}
 
 				// i am so fucking sorry for this if condition
 				if (daNote.isSustainNote
@@ -1674,12 +1865,13 @@ class PlayState extends MusicBeatState
 				// WIP interpolation shit? Need to fix the pause issue
 				// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * PlayState.SONG.speed));
 
-				if (daNote.y < -daNote.height)
+				if (daNote.y < -daNote.height && !FlxG.save.data.downscroll || daNote.y >= strumLine.y + 106 && FlxG.save.data.downscroll)
 				{
 					if (daNote.tooLate || !daNote.wasGoodHit)
 					{
 						health -= 0.0475;
 						vocals.volume = 0;
+						noteMiss(daNote.noteData);
 					}
 
 					daNote.active = false;
@@ -2145,6 +2337,7 @@ class PlayState extends MusicBeatState
 			songScore -= 10;
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+			missCount += 1;
 			// FlxG.sound.play(Paths.sound('missnote1'), 1, false);
 			// FlxG.log.add('played imss note');
 
@@ -2179,14 +2372,17 @@ class PlayState extends MusicBeatState
 		var downP = controls.DOWN_P;
 		var leftP = controls.LEFT_P;
 
-		if (leftP)
-			noteMiss(0);
-		if (downP)
-			noteMiss(1);
-		if (upP)
-			noteMiss(2);
-		if (rightP)
-			noteMiss(3);
+		if (!FlxG.save.data.ghostTap)
+		{
+			if (leftP)
+				noteMiss(0);
+			if (downP)
+				noteMiss(1);
+			if (upP)
+				noteMiss(2);
+			if (rightP)
+				noteMiss(3);
+		}
 	}
 
 	function noteCheck(keyP:Bool, note:Note):Void
@@ -2346,10 +2542,74 @@ class PlayState extends MusicBeatState
 		{
 			// dad.dance();
 		}
+
+		if (SONG.song.toLowerCase() == 'stress')
+		{
+			if (rightShootArray.contains(curStep))
+			{
+				gf.playAnim('shoot' + FlxG.random.int(1, 2), true);
+			}
+
+			if (leftShootArray.contains(curStep))
+			{
+				gf.playAnim('shoot' + FlxG.random.int(3, 4), true);
+			}
+
+			/*if (rightTankArray.contains(curStep))
+			{
+				var tankmanRunner:TankmenBG = new TankmenBG();
+				tankmanRunner.resetShit(FlxG.random.int(1500, 1700) * 1, 275, false, 1, 1.5);
+			}
+
+			if (leftTankArray.contains(curStep))
+			{
+				var tankmanRunner:TankmenBG = new TankmenBG();
+				tankmanRunner.resetShit(FlxG.random.int(630, 730) * -1, 255, true, 1, 1.5);]
+			}*/
+		}
+
+		if (dad.curCharacter == 'tankman' && SONG.song.toLowerCase() == 'stress')
+			{
+				if (curStep == 735)
+				{
+					dad.addOffset("singDOWN", 45, 20);
+					dad.animation.getByName('singDOWN').frames = dad.animation.getByName('prettyGoodAnim').frames;
+					dad.playAnim('prettyGoodAnim', true);
+				}
+	
+				if (curStep == 736 || curStep == 737)
+				{
+					
+					dad.playAnim('prettyGoodAnim', true);
+				}
+	
+				if (curStep == 767)
+				{
+					dad.addOffset("singDOWN", 98, -90);
+					dad.animation.getByName('singDOWN').frames = dad.animation.getByName('oldSingDOWN').frames;
+				}
+			}
+	
+			if (dad.curCharacter == 'tankman' && SONG.song.toLowerCase() == 'ugh')
+			{
+				if (curStep == 59 || curStep == 443 || curStep == 523 || curStep == 827)
+				{
+					dad.addOffset("singUP", 45, 0);
+					
+					dad.animation.getByName('singUP').frames = dad.animation.getByName('ughAnim').frames;
+				}
+				if (curStep == 64 || curStep == 448 || curStep == 528 || curStep == 832)
+				{
+					dad.addOffset("singUP", 24, 56);
+					dad.animation.getByName('singUP').frames = dad.animation.getByName('oldSingUP').frames;
+				}
+			}
 	}
 
 	var lightningStrikeBeat:Int = 0;
 	var lightningOffset:Int = 8;
+
+	var tankRollin:Bool = false;
 
 	override function beatHit()
 	{
@@ -2399,6 +2659,7 @@ class PlayState extends MusicBeatState
 		if (curBeat % gfSpeed == 0)
 		{
 			gf.dance();
+			iconBop();
 		}
 
 		if (!boyfriend.animation.curAnim.name.startsWith("sing"))
@@ -2457,6 +2718,11 @@ class PlayState extends MusicBeatState
 					trainCooldown = FlxG.random.int(-4, 0);
 					trainStart();
 				}
+			case "tankStage":
+				if (curBeat % 8 == 4 && FlxG.random.bool(30) && !tankRollin)
+				{
+					trace('tank roll lmao');
+				}
 		}
 
 		if (isHalloween && FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset)
@@ -2465,5 +2731,56 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	var tankX = 400;
+	var tankAngle:Float = FlxG.random.int(-90, 45);
+	var tankSpeed:Float = FlxG.random.float(5, 7);
+
+	function moveTank()
+	{
+		tankAngle += FlxG.elapsed * tankSpeed;
+		tankRolling.angle = tankAngle - 90 + 15;
+		tankRolling.x = tankX + 1500 * FlxMath.fastCos(FlxAngle.asRadians(tankAngle + 180));
+		tankRolling.y = 1300 + 1100 * FlxMath.fastSin(FlxAngle.asRadians(tankAngle + 180));
+	}
+
+	function again()
+	{
+		tankRolling.x = 300;
+		tankRolling.y = 300;
+		moveTank();
+	}
+
+	function iconBop()
+	{
+		var left:Bool = false;
+		left = !left;
+
+		if (left)
+		{
+			iconP1.angle = -4;
+			iconP2.angle = -4;
+		}
+		else
+		{
+			iconP1.angle = 4;
+			iconP2.angle = 4;
+		}
+	}
+
 	var curLight:Int = 0;
+}
+
+
+//picoshoot
+typedef Ps = 
+{
+	var right:Array<Int>;
+	var left:Array<Int>;
+}
+
+//tank spawns
+typedef Ts = 
+{
+	var right:Array<Int>;
+	var left:Array<Int>;
 }
